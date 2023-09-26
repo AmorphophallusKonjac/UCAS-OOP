@@ -1,0 +1,29 @@
+@startuml
+'https://plantuml.com/class-diagram
+ManufacturerCar<|--OwnerCar
+OwnerCar<|--TrafficAgencyCar
+class ManufacturerCar {
+    - private String manufacturerName;
+    - private String model;
+    - private int productionYear;
+    - private int maxSpeed;
+    + public ManufacturerCar(String manufacturerName, String model, int productionYear, int maxSpeed)
+    + public String getCarInfo()
+    + public static ManufacturerCar manufactureCar(String manufacturerName, String model, int productionYear, int maxSpeed)
+}
+
+class OwnerCar {
+    - private String ownerName;
+    - private String licensePlate;
+    + public OwnerCar(String ownerName, String licensePlate)
+    + public String getCarInfo()
+}
+
+class TrafficAgencyCar {
+    - private String agencyName;
+    - private String licensePlate;
+    + public TrafficAgencyCar(String agencyName, String licensePlate)
+    + public void checkSpeed(int speedLimit)
+    + public void fineDriver(OwnerCar ownerCar)
+}
+@enduml

@@ -1,0 +1,26 @@
+@startuml
+'https://plantuml.com/class-diagram
+class Student {
+    -private string name;
+    -private String studentId;
+    -private List<Book> borrowedBooks;
+    +public Student(String name, String studentId)
+    +public void borrowBook(Book book)
+    +public void returnBook(Book book)
+}
+class Book {
+    -private String title;
+    -private String author;
+    -private String isbn;
+    +public Book(String title, String author, String isbn)
+    +public String getBookInfo()
+}
+class Librarian {
+    -private String name;
+    -private Map<Book, Integer> bookInventory;
+    +public Librarian(String name)
+    +public int checkInventory(Book book)
+    +public void addBookToInventory(Book book)
+    +public void removeBookFromInventory(Book book)
+}
+@enduml
