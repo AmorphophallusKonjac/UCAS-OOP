@@ -4,6 +4,10 @@ description: 本节主要介绍Flink设计思想与基本框架
 
 # Flink简介
 
+## Flink主要功能
+
+Apache Flink是一个流处理框架，用于处理和分析实时数据流和批处理数据。它提供了一种可扩展、容错、高吞吐量和低延迟的数据处理方式。
+
 ## Flink设计思想
 
 ### DataFlow
