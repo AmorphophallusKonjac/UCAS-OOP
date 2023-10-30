@@ -21,6 +21,8 @@ Starting taskexecutor daemon on host LAPTOP-XIAOXIN-KONJAC.
 
 <figure><img src=".gitbook/assets/image (5).png" alt=""><figcaption><p>flink webUI</p></figcaption></figure>
 
+在`start-cluster.sh` 中执行了以下命令
+
 ## WorldCount
 
 {% code lineNumbers="true" %}
@@ -51,9 +53,10 @@ windowCounts.print()
 
 ```bash
 $ ./bin/flink run examples/streaming/WordCount.jar
-Starting cluster.
-Starting standalonesession daemon on host LAPTOP-XIAOXIN-KONJAC.
-Starting taskexecutor daemon on host LAPTOP-XIAOXIN-KONJAC.
+Job has been submitted with JobID c35dca1d97498807a1e0e17f1f1cedfa
+Program execution finished
+Job with JobID c35dca1d97498807a1e0e17f1f1cedfa has finished.
+Job Runtime: 601 ms
 ```
 
 #### 程序起点
