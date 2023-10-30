@@ -6,7 +6,7 @@ description: 从一个例子开始
 
 笔者以单机模式在本地部署Flink，提交Flink官方给出的例子WordCount.jar
 
-## Flink启动
+## Flink集群启动
 
 运行以下命令就可以以单机模式在本地部署Flink
 
@@ -21,33 +21,149 @@ Starting taskexecutor daemon on host LAPTOP-XIAOXIN-KONJAC.
 
 <figure><img src=".gitbook/assets/image (5).png" alt=""><figcaption><p>flink webUI</p></figcaption></figure>
 
-在`start-cluster.sh` 中执行了以下命令
+在`start-cluster.sh` 中依次运行了两个类的`main`方法
+
+1. `org.apache.flink.runtime.entrypoint.StandaloneSessionClusterEntrypoint`
+2. `org.apache.flink.runtime.taskexecutor.TaskManagerRunner`
+
+接下来将依次介绍流程。
+
+### 集群组件的创建和启动
+
+### TaskManager的创建与启动
 
 ## WorldCount
 
 {% code lineNumbers="true" %}
 ```java
-case class WordWithCount(word: String, count: Long)
+public class WordCount {
 
-val text = env.socketTextStream(host, port, '\n')
+    // *************************************************************************
+    // PROGRAM
+    // *************************************************************************
 
-val windowCounts = text.flatMap { w => w.split("\\s") }
-  .map { w => WordWithCount(w, 1) }
-  .keyBy("word")
-  .window(TumblingProcessingTimeWindow.of(Time.seconds(5)))
-  .sum("count")
+    public static void main(String[] args) throws Exception {
+        final CLI params = CLI.fromArgs(args);
 
-windowCounts.print()
+        // Create the execution environment. This is the main entrypoint
+        // to building a Flink application.
+        final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+
+        // Apache Flink’s unified approach to stream and batch processing means that a DataStream
+        // application executed over bounded input will produce the same final results regardless
+        // of the configured execution mode. It is important to note what final means here: a job
+        // executing in STREAMING mode might produce incremental updates (think upserts in
+        // a database) while in BATCH mode, it would only produce one final result at the end. The
+        // final result will be the same if interpreted correctly, but getting there can be
+        // different.
+        //
+        // The “classic” execution behavior of the DataStream API is called STREAMING execution
+        // mode. Applications should use streaming execution for unbounded jobs that require
+        // continuous incremental processing and are expected to stay online indefinitely.
+        //
+        // By enabling BATCH execution, we allow Flink to apply additional optimizations that we
+        // can only do when we know that our input is bounded. For example, different
+        // join/aggregation strategies can be used, in addition to a different shuffle
+        // implementation that allows more efficient task scheduling and failure recovery behavior.
+        //
+        // By setting the runtime mode to AUTOMATIC, Flink will choose BATCH if all sources
+        // are bounded and otherwise STREAMING.
+        env.setRuntimeMode(params.getExecutionMode());
+
+        // This optional step makes the input parameters
+        // available in the Flink UI.
+        env.getConfig().setGlobalJobParameters(params);
+
+        DataStream<String> text;
+        if (params.getInputs().isPresent()) {
+            // Create a new file source that will read files from a given set of directories.
+            // Each file will be processed as plain text and split based on newlines.
+            FileSource.FileSourceBuilder<String> builder =
+                    FileSource.forRecordStreamFormat(
+                            new TextLineInputFormat(), params.getInputs().get());
+
+            // If a discovery interval is provided, the source will
+            // continuously watch the given directories for new files.
+            params.getDiscoveryInterval().ifPresent(builder::monitorContinuously);
+
+            text = env.fromSource(builder.build(), WatermarkStrategy.noWatermarks(), "file-input");
+        } else {
+            text = env.fromElements(WordCountData.WORDS).name("in-memory-input");
+        }
+
+        DataStream<Tuple2<String, Integer>> counts =
+                // The text lines read from the source are split into words
+                // using a user-defined function. The tokenizer, implemented below,
+                // will output each word as a (2-tuple) containing (word, 1)
+                text.flatMap(new Tokenizer())
+                        .name("tokenizer")
+                        // keyBy groups tuples based on the "0" field, the word.
+                        // Using a keyBy allows performing aggregations and other
+                        // stateful transformations over data on a per-key basis.
+                        // This is similar to a GROUP BY clause in a SQL query.
+                        .keyBy(value -> value.f0)
+                        // For each key, we perform a simple sum of the "1" field, the count.
+                        // If the input data stream is bounded, sum will output a final count for
+                        // each word. If it is unbounded, it will continuously output updates
+                        // each time it sees a new instance of each word in the stream.
+                        .sum(1)
+                        .name("counter");
+
+        if (params.getOutput().isPresent()) {
+            // Given an output directory, Flink will write the results to a file
+            // using a simple string encoding. In a production environment, this might
+            // be something more structured like CSV, Avro, JSON, or Parquet.
+            counts.sinkTo(
+                            FileSink.<Tuple2<String, Integer>>forRowFormat(
+                                            params.getOutput().get(), new SimpleStringEncoder<>())
+                                    .withRollingPolicy(
+                                            DefaultRollingPolicy.builder()
+                                                    .withMaxPartSize(MemorySize.ofMebiBytes(1))
+                                                    .withRolloverInterval(Duration.ofSeconds(10))
+                                                    .build())
+                                    .build())
+                    .name("file-sink");
+        } else {
+            counts.print().name("print-sink");
+        }
+
+        // Apache Flink applications are composed lazily. Calling execute
+        // submits the Job and begins processing.
+        env.execute("WordCount");
+    }
+
+    // *************************************************************************
+    // USER FUNCTIONS
+    // *************************************************************************
+
+    /**
+     * Implements the string tokenizer that splits sentences into words as a user-defined
+     * FlatMapFunction. The function takes a line (String) and splits it into multiple pairs in the
+     * form of "(word,1)" ({@code Tuple2<String, Integer>}).
+     */
+    public static final class Tokenizer
+            implements FlatMapFunction<String, Tuple2<String, Integer>> {
+
+        @Override
+        public void flatMap(String value, Collector<Tuple2<String, Integer>> out) {
+            // normalize and split the line
+            String[] tokens = value.toLowerCase().split("\\W+");
+
+            // emit the pairs
+            for (String token : tokens) {
+                if (token.length() > 0) {
+                    out.collect(new Tuple2<>(token, 1));
+                }
+            }
+        }
+    }
+}
 ```
 {% endcode %}
 
-第3行text从主机端口每次取文本取到`\n`&#x20;
 
-第5-9行将文本分割成单词，然后设置时间窗口5秒钟，用该滚动窗口分割数据流，统计单词出现的次数。
 
-第11行将结果输出
-
-## 环境准备与作业提交
+## Flink作业提交
 
 执行以下命令将WorldCount提交
 
@@ -59,7 +175,7 @@ Job with JobID c35dca1d97498807a1e0e17f1f1cedfa has finished.
 Job Runtime: 601 ms
 ```
 
-#### 程序起点
+### 程序起点
 
 在`./bin/flink` 中执行了以下命令
 
@@ -69,16 +185,21 @@ exec "${JAVA_RUN}" $JVM_ARGS $FLINK_ENV_JAVA_OPTS "${log_setting[@]}" -classpath
 
 其运行了`org.apache.flink.client.cli.CliFrontend` 的main方法。
 
-{% code lineNumbers="true" %}
-```java
-/** Submits the job based on the arguments. */
-    public static void main(final String[] args) {
-        int retCode = INITIAL_RET_CODE;
-        try {
-            retCode = mainInternal(args);
-        } finally {
-            System.exit(retCode);
-        }
-    }
-```
-{% endcode %}
+1. 解析环境配置，选择命令行接口（Generic、Yarn、Default），在本例中为Default
+2. 调用命令行接口继续运行。
+
+### 解析参数
+
+1. 命令行接口调用`CliFrontendParser`解析参数
+2. 打包有效配置，调用`ClientUtils`运行程序
+
+### 调用用户代码的main方法
+
+1. 设置执行环境上下文
+2. 调用用户代码的main方法，本例子中为WordCount的main方法
+
+### 调用执行环境的 execute 方法
+
+1. WordCount实例化了一个流执行环境`StreamExecutionEnvironment`
+2. 在设置了执行环境后调用其`execute`方法
+
