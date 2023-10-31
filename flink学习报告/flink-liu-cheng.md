@@ -177,11 +177,11 @@ Job Runtime: 601 ms
 
 ### 流程时序图
 
-<figure><img src=".gitbook/assets/SubmitWordCount.jpg" alt=""><figcaption></figcaption></figure>
+<figure><img src=".gitbook/assets/SubmitWordCount.jpg" alt=""><figcaption><p>提交流程时序图</p></figcaption></figure>
 
 ### 程序起点
 
-在`./bin/flink` 中执行了以下命令
+对应时序图中步骤1，在`./bin/flink` 中执行了以下命令
 
 ```bash
 exec "${JAVA_RUN}" $JVM_ARGS $FLINK_ENV_JAVA_OPTS "${log_setting[@]}" -classpath "`manglePathList "$CC_CLASSPATH:$INTERNAL_HADOOP_CLASSPATHS"`" org.apache.flink.client.cli.CliFrontend "$@"
@@ -189,21 +189,44 @@ exec "${JAVA_RUN}" $JVM_ARGS $FLINK_ENV_JAVA_OPTS "${log_setting[@]}" -classpath
 
 其运行了`org.apache.flink.client.cli.CliFrontend` 的main方法。
 
-1. 解析环境配置，选择命令行接口（Generic、Yarn、Default），在本例中为Default
-2. 调用命令行接口继续运行。
-
 ### 解析参数
 
-1. 命令行接口调用`CliFrontendParser`解析参数
-2. 打包有效配置，调用`ClientUtils`运行程序
+对应时序图中步骤2-4
+
+1. 解析环境配置，选择命令行接口（Generic、Yarn、Default），在本例中为Default
+2. 调用命令行接口继续运行。
+3. 命令行接口调用`CliFrontendParser`解析参数
+4. 打包有效配置，创建`PackagedProgram`
 
 ### 调用用户代码的main方法
 
-1. 设置执行环境上下文
-2. 调用用户代码的main方法，本例子中为WordCount的main方法
+对应时序图步骤5-7
+
+1. 调用`ClientUtils`运行程序
+2. 设置执行环境上下文
+3. 调用用户代码的main方法，本例子中为WordCount的main方法
 
 ### 调用执行环境的 execute 方法
 
+对应时序图步骤8-10
+
 1. WordCount实例化了一个流执行环境`StreamExecutionEnvironment`
 2. 在设置了执行环境后调用其`execute`方法
+
+### 生成jobGraph和clusterClient
+
+对应时序图步骤11-26
+
+1. 流执行环境调用`getStreamGraph`得到`streamGraph`
+2. 选择并创建`PipelineExecutor`继续执行，在本例中为`AbstractSessionClusterExecutor`
+3. `PipelineExecutor`调用`PipelineExecutorUtils`的`getJobGraph`方法得到`jobGraph`
+4. 通过工厂模式依次生成`clusterDescriptor`、`clusterClientProvider`、`clusterClient`
+
+### 提交任务并返回结果
+
+对应时序图步骤27-33
+
+1. `clusterClient`不断尝试提交任务到集群，并返回提交结果
+
+
 
