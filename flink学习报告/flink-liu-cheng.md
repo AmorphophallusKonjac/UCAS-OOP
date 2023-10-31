@@ -30,6 +30,36 @@ Starting taskexecutor daemon on host LAPTOP-XIAOXIN-KONJAC.
 
 ### 集群组件的创建和启动
 
+#### 流程时序图
+
+<figure><img src=".gitbook/assets/startcluster.jpg" alt=""><figcaption><p>集群启动时序图</p></figcaption></figure>
+
+#### 程序入口
+
+对应时序图中步骤1
+
+1. `start-cluster.sh`运行了`org.apache.flink.runtime.entrypoint.StandaloneSessionClusterEntrypoint`
+
+#### 环境准备
+
+对应时序图中步骤2-6
+
+1. 解析参数，创建并调用`ClusterEntrypoint`中`runClusterEntrypoint()`方法继续执行
+2. 调用`initializeServices()`初始化服务
+
+#### 集群组件创建
+
+对应时序图中步骤7-16
+
+1. 创建并调用`DefaultDispatcherResourceManagerComponentFactory`的`create()`方法
+2. 创建并运行`webMonitorEndpoint`、`dispatcherRunner`和`resourceManagerService`，并集合为`DispatcherResourceManagerComponent`
+
+#### 集群启动
+
+对应时序图中步骤17-18
+
+1. 调用`DispatcherResourceManagerComponent`的`getShutDownFuture`启动集群
+
 ### TaskManager的创建与启动
 
 ## WorldCount
@@ -179,7 +209,7 @@ Job Runtime: 601 ms
 
 <figure><img src=".gitbook/assets/SubmitWordCount.jpg" alt=""><figcaption><p>提交流程时序图</p></figcaption></figure>
 
-### 程序起点
+### 程序入口
 
 对应时序图中步骤1，在`./bin/flink` 中执行了以下命令
 
