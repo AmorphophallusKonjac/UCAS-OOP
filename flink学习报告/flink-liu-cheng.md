@@ -175,6 +175,10 @@ Job with JobID c35dca1d97498807a1e0e17f1f1cedfa has finished.
 Job Runtime: 601 ms
 ```
 
+### 流程时序图
+
+<figure><img src=".gitbook/assets/SubmitWordCount.jpg" alt=""><figcaption></figcaption></figure>
+
 ### 程序起点
 
 在`./bin/flink` 中执行了以下命令
