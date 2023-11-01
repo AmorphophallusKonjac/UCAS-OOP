@@ -283,5 +283,7 @@ exec "${JAVA_RUN}" $JVM_ARGS $FLINK_ENV_JAVA_OPTS "${log_setting[@]}" -classpath
 
 1. `clusterClient`不断尝试提交任务到集群，并返回提交结果
 
+至此，WordCount被提交的了之前启动的集群上，并开始运行。
+
 
 
