@@ -216,7 +216,11 @@ public class WordCount {
 ```
 {% endcode %}
 
+上面的代码是WordCount的源代码。这里只讲解两个语句，在之后的提交流程中会有涉及。
 
+第12行，实例化了一个流执行环境`StreamExecutionEnvironment`
+
+第94行，调用了流执行环境的`execute()`方法
 
 ## Flink作业提交
 
