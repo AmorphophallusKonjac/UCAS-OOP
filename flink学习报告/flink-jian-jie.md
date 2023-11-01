@@ -1,21 +1,21 @@
 ---
-description: 本节主要介绍Flink设计思想与基本框架
+description: 本节主要介绍 Flink 设计思想与基本框架
 ---
 
-# Flink简介
+# Flink 简介
 
-## Flink主要功能
+## Flink 主要功能
 
-Apache Flink是一个流处理框架，用于处理和分析实时数据流和批处理数据。它提供了一种可扩展、容错、高吞吐量和低延迟的数据处理方式。
+Apache Flink 是一个流处理框架，用于处理和分析实时数据流和批处理数据。它提供了一种可扩展、容错、高吞吐量和低延迟的数据处理方式。
 
-## Flink设计思想
+## Flink 设计思想
 
 ### DataFlow
 
-DataFlow是Google提出的编程模型，其提供了一种统一批处理和流处理的系统。
+DataFlow 是 Google 提出的编程模型，其提供了一种统一批处理和流处理的系统。
 
 {% hint style="info" %}
-想要详细了解DataFlow，可以阅读Google的论文[https://dl.acm.org/doi/10.14778/2824032.2824076](https://dl.acm.org/doi/10.14778/2824032.2824076)
+想要详细了解 DataFlow，可以阅读Google的论文[https://dl.acm.org/doi/10.14778/2824032.2824076](https://dl.acm.org/doi/10.14778/2824032.2824076)
 {% endhint %}
 
 生产生活中的数据本身就是流式了。在分析数据的时候可以将数据视为有界流和无界流。
@@ -30,7 +30,7 @@ DataFlow是Google提出的编程模型，其提供了一种统一批处理和流
 
 ### 窗口计算
 
-DataFlow提供了三种窗口计算类型。窗口可以把一个数据集切分为有限的数据片，方便聚合处理。
+DataFlow 提供了三种窗口计算类型。窗口可以把一个数据集切分为有限的数据片，方便聚合处理。
 
 1. 固定窗口：固定窗口时间
 2. 滑动窗口：固定窗口时间，同时有一个滑动周期
@@ -46,25 +46,25 @@ DataFlow提供了三种窗口计算类型。窗口可以把一个数据集切分
 
 ### 分布式异步快照算法
 
-Flink中通过checkpoint机制保证数据一致性，checkpoint机制通过Chandy-Lamport算法实现，其通过抽象分布式系统模型描述了一种简单、直接但是非常有效的分布式快照算法。
+Flink中通过 checkpoint 机制保证数据一致性，checkpoint 机制通过 Chandy-Lamport 算法实现，其通过抽象分布式系统模型描述了一种简单、直接但是非常有效的分布式快照算法。
 
-## Flink整体架构
+## Flink 整体架构
 
-### Flink架构介绍
+### Flink 架构介绍
 
 Flink系统架构主要分为APIs & Libraries、Core 和Deploy三层。
 
 <figure><img src=".gitbook/assets/image (3).png" alt=""><figcaption><p>Flink整体架构</p></figcaption></figure>
 
-API层实现了面向批处理的DataSet API和面向流处理的DataStream API。在此之上构建了面向特定领域的Libraries。面向批处理支持CEP（复杂事件处理）、Table（类似SQL的操作）。面向流处理支持Table（类似SQL的操作）、Graph（图处理）、Flink ML（机器学习库）。Runtime层提供Flink计算的全部核心实现。Deploy层支持多种部署模式。
+API 层实现了面向批处理的 DataSet API 和面向流处理的 DataStream API 。在此之上构建了面向特定领域的Libraries。面向批处理支持 CEP（复杂事件处理）、Table（类似SQL的操作）。面向流处理支持Table（类似SQL的操作）、Graph（图处理）、Flink ML（机器学习库）。Runtime 层提供 Flink 计算的全部核心实现。Deploy 层支持多种部署模式。
 
-### Flink集群架构
+### Flink 集群架构
 
-Flink集群架构如下图所示。
+Flink 集群架构如下图所示。
 
 <figure><img src=".gitbook/assets/image (2).png" alt=""><figcaption><p>Flink集群架构图</p></figcaption></figure>
 
-Client将数据准备并发送给JobManager。
+Client 将数据准备并发送给 JobManager。
 
 JobManager 具有许多与协调 Flink 应用程序的分布式执行有关的职责：它决定何时调度下一个 task（或一组 task）、对完成的 task 或执行失败做出反应、协调 checkpoint、并且协调从失败中恢复等等。
 

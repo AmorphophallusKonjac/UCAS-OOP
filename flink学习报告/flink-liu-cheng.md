@@ -6,9 +6,9 @@ description: 从一个例子开始
 
 笔者以单机模式在本地部署Flink，提交Flink官方给出的例子WordCount.jar
 
-## Flink集群启动
+## Flink 集群启动
 
-运行以下命令就可以以单机模式在本地部署Flink
+运行以下命令就可以以单机模式在本地部署 Flink
 
 ```bash
 $ ./bin/start-cluster.sh
@@ -17,11 +17,11 @@ Starting standalonesession daemon on host LAPTOP-XIAOXIN-KONJAC.
 Starting taskexecutor daemon on host LAPTOP-XIAOXIN-KONJAC.
 ```
 
-此时可以通过访问`localhost:8081` 查看Flink的webUI
+此时可以通过访问 `localhost:8081` 查看 Flink 的 webUI
 
 <figure><img src=".gitbook/assets/image (5).png" alt=""><figcaption><p>flink webUI</p></figcaption></figure>
 
-在`start-cluster.sh` 中依次运行了两个类的`main`方法
+在 `start-cluster.sh` 中依次运行了两个类的 `main` 方法
 
 1. `org.apache.flink.runtime.entrypoint.StandaloneSessionClusterEntrypoint`
 2. `org.apache.flink.runtime.taskexecutor.TaskManagerRunner`
@@ -36,31 +36,31 @@ Starting taskexecutor daemon on host LAPTOP-XIAOXIN-KONJAC.
 
 #### 程序入口
 
-对应时序图中步骤1
+对应时序图中步骤 1
 
-1. `start-cluster.sh`运行了`org.apache.flink.runtime.entrypoint.StandaloneSessionClusterEntrypoint`
+1. `start-cluster.sh` 运行了 `org.apache.flink.runtime.entrypoint.StandaloneSessionClusterEntrypoint`
 
 #### 环境准备
 
-对应时序图中步骤2-6
+对应时序图中步骤 2-6
 
-1. 解析参数，创建并调用`ClusterEntrypoint`中`runClusterEntrypoint()`方法继续执行
-2. 调用`initializeServices()`初始化服务
+1. 解析参数，创建并调用 `ClusterEntrypoint`中`runClusterEntrypoint()` 方法继续执行
+2. 调用 `initializeServices()` 初始化服务
 
 #### 集群组件创建
 
-对应时序图中步骤7-16
+对应时序图中步骤 7-16
 
-1. 创建并调用`DefaultDispatcherResourceManagerComponentFactory`的`create()`方法
-2. 创建并运行`webMonitorEndpoint`、`dispatcherRunner`和`resourceManagerService`，并集合为`DispatcherResourceManagerComponent`
+1. 创建并调用 `DefaultDispatcherResourceManagerComponentFactory`的`create()` 方法
+2. 创建并运行 `webMonitorEndpoint`、`dispatcherRunner` 和 `resourceManagerService`，并集合为 `DispatcherResourceManagerComponent`
 
 #### 集群启动
 
-对应时序图中步骤17-18
+对应时序图中步骤 17-18
 
-1. 调用`DispatcherResourceManagerComponent`的`getShutDownFuture`启动集群
+1. 调用 `DispatcherResourceManagerComponent` 的 `getShutDownFuture` 启动集群
 
-### TaskManager的创建与启动
+### TaskManager 的创建与启动
 
 #### 流程时序图
 
@@ -68,24 +68,24 @@ Starting taskexecutor daemon on host LAPTOP-XIAOXIN-KONJAC.
 
 #### 程序入口
 
-对应时序图中步骤1
+对应时序图中步骤 1
 
-1. `start-cluster.sh`运行了`org.apache.flink.runtime.taskexecutor.TaskManagerRunner`
+1. `start-cluster.sh` 运行了 `org.apache.flink.runtime.taskexecutor.TaskManagerRunner`
 
 #### 环境准备
 
-对应时序图中步骤2-4
+对应时序图中步骤 2-4
 
 1. 解析参数，加载插件
-2. 调用`runTaskManager()`继续创建
+2. 调用 `runTaskManager()` 继续创建
 
 #### TaskManager创建
 
-对应时序图中步骤5-14
+对应时序图中步骤 5-14
 
-1. 实例化`TaskManagerRunner`并调用其`start()`方法
-2. `TaskManagerRunner`调用自身`startTaskManagerRunnerServices()`方法创建`TaskExecutorService`
-3. 调用`TaskExecutorService`的`start()`方法，其中启动了`TaskExecutor`
+1. 实例化 `TaskManagerRunner` 并调用其 `start()` 方法
+2. `TaskManagerRunner` 调用自身 `startTaskManagerRunnerServices()` 方法创建 `TaskExecutorService`
+3. 调用 `TaskExecutorService` 的 `start()` 方法，其中启动了 `TaskExecutor`
 
 ## WorldCount
 
@@ -216,15 +216,15 @@ public class WordCount {
 ```
 {% endcode %}
 
-上面的代码是WordCount的源代码。这里只讲解两个语句，在之后的提交流程中会有涉及。
+上面的代码是 WordCount 的源代码。这里只讲解两个语句，在之后的提交流程中会有涉及。
 
-第12行，实例化了一个流执行环境`StreamExecutionEnvironment`
+第 12 行，实例化了一个流执行环境 `StreamExecutionEnvironment`
 
-第94行，调用了流执行环境的`execute()`方法
+第 94 行，调用了流执行环境的 `execute()` 方法
 
-## Flink作业提交
+## Flink 作业提交
 
-执行以下命令将WorldCount提交
+执行以下命令将 WorldCount 提交
 
 ```bash
 $ ./bin/flink run examples/streaming/WordCount.jar
@@ -240,54 +240,54 @@ Job Runtime: 601 ms
 
 ### 程序入口
 
-对应时序图中步骤1，在`./bin/flink` 中执行了以下命令
+对应时序图中步骤 1，在 `./bin/flink` 中执行了以下命令
 
 ```bash
 exec "${JAVA_RUN}" $JVM_ARGS $FLINK_ENV_JAVA_OPTS "${log_setting[@]}" -classpath "`manglePathList "$CC_CLASSPATH:$INTERNAL_HADOOP_CLASSPATHS"`" org.apache.flink.client.cli.CliFrontend "$@"
 ```
 
-其运行了`org.apache.flink.client.cli.CliFrontend` 的main方法。
+其运行了 `org.apache.flink.client.cli.CliFrontend` 的main方法。
 
 ### 解析参数
 
-对应时序图中步骤2-4
+对应时序图中步骤 2-4
 
-1. 解析环境配置，选择命令行接口（Generic、Yarn、Default），在本例中为Default
+1. 解析环境配置，选择命令行接口（Generic、Yarn、Default），在本例中为 Default
 2. 调用命令行接口继续运行。
-3. 命令行接口调用`CliFrontendParser`解析参数
-4. 打包有效配置，创建`PackagedProgram`
+3. 命令行接口调用 `CliFrontendParser` 解析参数
+4. 打包有效配置，创建 `PackagedProgram`
 
 ### 调用用户代码的main方法
 
-对应时序图步骤5-7
+对应时序图步骤 5-7
 
-1. 调用`ClientUtils`运行程序
+1. 调用 `ClientUtils` 运行程序
 2. 设置执行环境上下文
-3. 调用用户代码的main方法，本例子中为WordCount的main方法
+3. 调用用户代码的 main 方法，本例子中为 WordCount 的 main 方法
 
 ### 调用执行环境的 execute 方法
 
-对应时序图步骤8-10
+对应时序图步骤 8-10
 
-1. WordCount实例化了一个流执行环境`StreamExecutionEnvironment`
-2. 在设置了执行环境后调用其`execute`方法
+1. WordCount 实例化了一个流执行环境 `StreamExecutionEnvironment`
+2. 在设置了执行环境后调用其 `execute` 方法
 
-### 生成jobGraph和clusterClient
+### 生成 jobGraph 和 clusterClient
 
-对应时序图步骤11-26
+对应时序图步骤 11-26
 
-1. 流执行环境调用`getStreamGraph`得到`streamGraph`
-2. 选择并创建`PipelineExecutor`继续执行，在本例中为`AbstractSessionClusterExecutor`
-3. `PipelineExecutor`调用`PipelineExecutorUtils`的`getJobGraph`方法得到`jobGraph`
-4. 通过工厂模式依次生成`clusterDescriptor`、`clusterClientProvider`、`clusterClient`
+1. 流执行环境调用 `getStreamGraph` 得到 `streamGraph`
+2. 选择并创建 `PipelineExecutor` 继续执行，在本例中为 `AbstractSessionClusterExecutor`
+3. `PipelineExecutor` 调用 `PipelineExecutorUtils` 的 `getJobGraph` 方法得到 `jobGraph`
+4. 通过工厂模式依次生成 `clusterDescriptor`、`clusterClientProvider`、`clusterClient`
 
 ### 提交任务并返回结果
 
-对应时序图步骤27-33
+对应时序图步骤 27-33
 
-1. `clusterClient`不断尝试提交任务到集群，并返回提交结果
+1. `clusterClient` 不断尝试提交任务到集群，并返回提交结果
 
-至此，WordCount被提交的了之前启动的集群上，并开始运行。
+至此，WordCount 被提交的了之前启动的集群上，并开始运行。
 
 
 
