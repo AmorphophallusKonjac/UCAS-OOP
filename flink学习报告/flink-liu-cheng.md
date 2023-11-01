@@ -62,6 +62,31 @@ Starting taskexecutor daemon on host LAPTOP-XIAOXIN-KONJAC.
 
 ### TaskManager的创建与启动
 
+#### 流程时序图
+
+<figure><img src=".gitbook/assets/starttaskmanager.jpg" alt=""><figcaption><p>TaskManager启动时序图</p></figcaption></figure>
+
+#### 程序入口
+
+对应时序图中步骤1
+
+1. `start-cluster.sh`运行了`org.apache.flink.runtime.taskexecutor.TaskManagerRunner`
+
+#### 环境准备
+
+对应时序图中步骤2-4
+
+1. 解析参数，加载插件
+2. 调用`runTaskManager()`继续创建
+
+#### TaskManager创建
+
+对应时序图中步骤5-14
+
+1. 实例化`TaskManagerRunner`并调用其`start()`方法
+2. `TaskManagerRunner`调用自身`startTaskManagerRunnerServices()`方法创建`TaskExecutorService`
+3. 调用`TaskExecutorService`的`start()`方法，其中启动了`TaskExecutor`
+
 ## WorldCount
 
 {% code lineNumbers="true" %}
