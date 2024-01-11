@@ -44,7 +44,7 @@ description: 本节主要分析 Flink 运行组件的设计
 2. `JobMasterGateway` 接口定义了 `JobMaster` 的 `RPC` 接口方法。
 3. `JobMaster` 通过继承 `FencedRpcEndpoint` 抽象实现类，使得 `JobMaster` 成为 `RPC` 服务节点，这样其他组件就可以通过 `RPC` 的通信方式与 `JobMaster` 进行交互了。
 
-<figure><img src=".gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
+<figure><img src=".gitbook/assets/image (5).png" alt=""><figcaption></figcaption></figure>
 
 ## TaskManager
 

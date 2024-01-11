@@ -20,9 +20,21 @@ Flink 中的执行图可以分成四层：`StreamGraph` -> `JobGraph` -> `Execut
 
 `JobManager` 根 据 `ExecutionGraph` 对 Job 进行调度后， 在各个 `TaskManager` 上部署 `Task` 后形成的“图”，并不是一个具体的数据结构。
 
-<figure><img src=".gitbook/assets/image (1).png" alt=""><figcaption><p>Flink 官方文档中对执行图的介绍</p></figcaption></figure>
+<figure><img src=".gitbook/assets/image (1) (1).png" alt=""><figcaption><p>Flink 官方文档中对执行图的介绍</p></figcaption></figure>
 
 ## 调度器
 
 调度器在 `JobMaster` 中。调度器是 Flink 作业执行的核心组件，管理作业执行的所有相关过程，包括 `JobGraph` 到 `ExecutionGraph` 的转换、作业生命周期管理（作业的发布、取消、停止）、作业的 `Task` 生命周期管理（`Task` 的发布、取消、停止) 、资源申请与释放、作业和 `Task` 的容错等。
 
+<figure><img src=".gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
+
+## 调度策略
+
+`SchedulerStrategy` 接口定义了调度行为，其中定义了四种行为。
+
+* `startScheduling`：调度入口，触发调度器的调度行为。
+* `restartTasks`：重启执行失败的 Task，一般是 Task 执行异常导致的。
+* `onExcutionStateChange`：当 Execution 的状态发生改变时执行。
+* `onPartitionConsumable`：当 `IntermediateResultPartition` 中的数据可以消费时执行。
+
+<figure><img src=".gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure>

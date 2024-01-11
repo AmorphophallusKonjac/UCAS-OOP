@@ -8,7 +8,7 @@ description: 从一个例子开始
 
 ## 流程示意图
 
-<figure><img src=".gitbook/assets/image (2).png" alt=""><figcaption></figcaption></figure>
+<figure><img src=".gitbook/assets/image (2) (1).png" alt=""><figcaption></figcaption></figure>
 
 ## Flink 集群启动
 
@@ -23,7 +23,7 @@ Starting taskexecutor daemon on host LAPTOP-XIAOXIN-KONJAC.
 
 此时可以通过访问 `localhost:8081` 查看 Flink 的 webUI
 
-<figure><img src=".gitbook/assets/image (5).png" alt=""><figcaption><p>flink webUI</p></figcaption></figure>
+<figure><img src=".gitbook/assets/image (5) (1).png" alt=""><figcaption><p>flink webUI</p></figcaption></figure>
 
 在 `start-cluster.sh` 中依次运行了两个类的 `main` 方法
 
@@ -297,7 +297,7 @@ exec "${JAVA_RUN}" $JVM_ARGS $FLINK_ENV_JAVA_OPTS "${log_setting[@]}" -classpath
 
 ### 流程时序图
 
-<figure><img src=".gitbook/assets/image (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src=".gitbook/assets/image (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 ### 接收作业
 
