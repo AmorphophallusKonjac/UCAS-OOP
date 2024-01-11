@@ -6,6 +6,6 @@ Flink源码地址为: [https://github.com/apache/flink](https://github.com/apach
 
 Flink是一个规模很大的项目，而且笔者阅读开源项目代码的经验并不丰富。因此本报告也只能是管中窥豹。如果你在文中发现了任何你确认是错误的内容，请与作者联系，我将对此不胜感激！
 
-汪铭煜 2023年11月1日
+汪铭煜 2023年1月11日
 
 邮箱：wangmingyu21a@mails.ucas.ac.cn&#x20;

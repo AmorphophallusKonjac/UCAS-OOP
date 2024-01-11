@@ -2,9 +2,13 @@
 description: 从一个例子开始
 ---
 
-# Flink流程
+# Flink 流程
 
-笔者以单机模式在本地部署Flink，提交Flink官方给出的例子WordCount.jar
+笔者以单机模式在本地部署 Flink，提交 Flink 官方给出的例子 WordCount.jar
+
+## 流程示意图
+
+<figure><img src=".gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
 
 ## Flink 集群启动
 
@@ -289,5 +293,20 @@ exec "${JAVA_RUN}" $JVM_ARGS $FLINK_ENV_JAVA_OPTS "${log_setting[@]}" -classpath
 
 至此，WordCount 被提交的了之前启动的集群上，并开始运行。
 
+## Flink 作业运行
 
+### 流程时序图
 
+<figure><img src=".gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure>
+
+### 接收作业
+
+对应时序图中步骤 1-8
+
+1. `Dispatcher` 接收作业并且为作业创建一个 `JobMaster` 来管理其在集群上的运行
+
+### JobMaster 启动
+
+对应时序图中步骤 9-11
+
+1. `JobMaster` 启动并运行作业，返回作业提交情况给 `Dispatcher` ，`Dispatcher` 将作业提交情况返回给客户端。
