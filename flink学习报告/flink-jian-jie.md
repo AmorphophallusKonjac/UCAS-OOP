@@ -20,7 +20,7 @@ DataFlow 是 Google 提出的编程模型，其提供了一种统一批处理和
 
 生产生活中的数据本身就是流式了。在分析数据的时候可以将数据视为有界流和无界流。
 
-<figure><img src=".gitbook/assets/image (2).png" alt=""><figcaption><p>有界数据流与无界数据流</p></figcaption></figure>
+<figure><img src=".gitbook/assets/image (2) (1).png" alt=""><figcaption><p>有界数据流与无界数据流</p></figcaption></figure>
 
 **批处理**是有界数据流处理的范例。在这种模式下，你可以选择在计算结果输出之前输入整个数据集，这也就意味着你可以对整个数据集的数据进行排序、统计或汇总计算后再输出结果。
 
@@ -40,7 +40,7 @@ DataFlow 提供了三种窗口计算类型。窗口可以把一个数据集切�
 
 将时间域分为两种，事件时间是事件发生时的系统时间；处理时间是系统观察到事件的时间。
 
-<figure><img src=".gitbook/assets/image (1) (1).png" alt=""><figcaption><p>事件时间与处理时间关系图</p></figcaption></figure>
+<figure><img src=".gitbook/assets/image (1) (1) (1).png" alt=""><figcaption><p>事件时间与处理时间关系图</p></figcaption></figure>
 
 借助水位线机制可以有效处理迟到的乱序事件，得到正确的数据处理结果。
 
@@ -62,7 +62,7 @@ API 层实现了面向批处理的 DataSet API 和面向流处理的 DataStream 
 
 Flink 集群架构如下图所示。
 
-<figure><img src=".gitbook/assets/image (2) (1).png" alt=""><figcaption><p>Flink集群架构图</p></figcaption></figure>
+<figure><img src=".gitbook/assets/image (2) (1) (1).png" alt=""><figcaption><p>Flink集群架构图</p></figcaption></figure>
 
 Client 将数据准备并发送给 JobManager。
 
